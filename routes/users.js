@@ -1,15 +1,16 @@
 const db = require('../config/dbconfig');
+const bcrypt = require('bcryptjs')
 
 
 exports.createUser = async (request, response) => {
 
 
-    const { userName, email, password } = request.body
+    let { userName, email, password } = request.body;
 
 
     try {
 
-    //check if user exists
+        //check if user exists
 
         const user = await db.searchByValue(
             {
@@ -28,8 +29,9 @@ exports.createUser = async (request, response) => {
         }
 
 
-            //encrypt password
-
+        //encrypt password
+        const salt = await bcrypt.genSalt(10);
+        password = await bcrypt.hash(password, salt)
 
         await db.insert(
             {
