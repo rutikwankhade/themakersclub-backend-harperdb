@@ -1,9 +1,11 @@
 const db = require('../config/dbconfig');
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+require('dotenv').config();
+
 
 
 exports.createUser = async (request, response) => {
-
 
     let { userName, email, password } = request.body;
 
@@ -12,7 +14,7 @@ exports.createUser = async (request, response) => {
 
         //check if user exists
 
-        const user = await db.searchByValue(
+        const userExist = await db.searchByValue(
             {
                 table: 'users',
                 searchAttribute: 'email',
@@ -21,9 +23,9 @@ exports.createUser = async (request, response) => {
             }
 
         )
-        console.log(user.data)
+        console.log(userExist.data)
 
-        if (user.data.length) {
+        if (userExist.data.length) {
             return response.status(500).json("User with this email id already exists");
 
         }
@@ -33,7 +35,7 @@ exports.createUser = async (request, response) => {
         const salt = await bcrypt.genSalt(10);
         password = await bcrypt.hash(password, salt)
 
-        await db.insert(
+        const user = await db.insert(
             {
                 table: 'users',
                 records: [
@@ -44,23 +46,44 @@ exports.createUser = async (request, response) => {
 
                     }
                 ]
-            },
-            (err, res) => {
-                if (err) response.status(500).json(err);
-                response.status(200).json(res.data);
             }
         );
 
+        // response.send(user.data.inserted_hashes[0])
+
+
+
+ //return jwt
+
+    const payLoad = {
+        user: {
+            id: user.data.inserted_hashes[0]
+        }
+        }
+        
+        jwt.sign(payLoad, process.env.jwtSecret,
+            { expiresIn: 360000 },
+            (err, token) => {
+                if (err) {
+                    throw err
+                }
+                response.json({token})
+            
+        }
+        )
+
+
+
+
+            // (err, res) => {
+            //     if (err) response.status(500).json(err);
+            //     response.status(200).json(res.data);
+            // }
 
     } catch (err) {
         response.status(500).json('server error')
     }
 
-
-
-
-    //return jwt
-
-
+  
 
 }
