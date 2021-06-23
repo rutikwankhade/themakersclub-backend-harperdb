@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.post('/', async (request, response) => {
 
-    let { userName, email, password } = request.body;
+    let { username, email, password } = request.body;
 
 
     try {
@@ -27,7 +27,7 @@ router.post('/', async (request, response) => {
         console.log(userExist.data)
 
         if (userExist.data.length) {
-            return response.status(500).json("User with this email id already exists");
+            return response.status(500).send({ error: "User with this email id already exists" });
         }
 
 
@@ -43,7 +43,7 @@ router.post('/', async (request, response) => {
                 table: 'users',
                 records: [
                     {
-                        username: userName,
+                        username: username,
                         email: email,
                         password: password,
 
