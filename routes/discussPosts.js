@@ -54,9 +54,9 @@ router.post('/', auth, async (request, response) => {
 //Get all discussion posts
 // access public
 
-router.get('/', async(req, res) => {
+router.get('/', async (req, res) => {
 
-    try{
+    try {
         const posts = await db.searchByValue(
             {
                 table: 'discussions',
@@ -81,9 +81,9 @@ router.get('/', async(req, res) => {
 //Get discussion post by id
 // access public
 
-router.get('/:id', async(req, res) => {
+router.get('/:id', async (req, res) => {
 
-    try{
+    try {
         const post = await db.searchByValue(
             {
                 table: 'discussions',
@@ -94,7 +94,7 @@ router.get('/:id', async(req, res) => {
 
         )
         if (!post.data.length) {
-            return res.status(404).json({msg:'Post not found'})
+            return res.status(404).json({ msg: 'Post not found' })
         }
         res.json(post)
 
@@ -103,6 +103,52 @@ router.get('/:id', async(req, res) => {
 
     }
 })
+
+
+
+
+//DELETE api/discuss-posts/:id
+//delete discussion post by id
+// access private
+
+router.delete('/:id', auth, async (req, res) => {
+
+    try {
+        const post = await db.searchByValue(
+            {
+                table: 'discussions',
+                searchAttribute: 'id',
+                searchValue: req.params.id,
+                attributes: ['*']
+            }
+
+        );
+
+// res.json(post)
+        //check user
+        if (post.data[0].userId.toString() !== req.user.id) {
+            return res.status(401).json({ msg: 'user not authorized' })
+
+        }
+
+        if (!post.data.length) {
+            return res.status(404).json({ msg: 'Post not found' })
+        }
+
+
+        await db.delete({
+            table: 'discussions',
+            hashValues: [req.params.id]
+        })
+
+        res.json({ msg: 'post removed' })
+
+    } catch (err) {
+        res.json(err)
+
+    }
+})
+
 
 
 
