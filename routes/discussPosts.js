@@ -3,11 +3,10 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth')
 
-//POST api/posts
+
+//POST api/discuss-posts
 //create a post
 //access private
-
-
 
 router.post('/', auth, async (request, response) => {
 
@@ -31,11 +30,11 @@ router.post('/', auth, async (request, response) => {
                 table: 'discussions',
                 records: [
                     {
-                        userName: user.data[0].name,
+                        userName: user.data[0].username,
                         userId: user.data[0].id,
                         postTitle: postTitle,
                         postText: postText,
-                        replies:[]
+                        replies: []
                     }
                 ]
             }
@@ -47,12 +46,36 @@ router.post('/', auth, async (request, response) => {
 
     }
 
-
-
-
-
-
 });
+
+
+
+//GET api/discuss-posts
+//Get all discussion posts
+// access public
+
+router.get('/', async(req, res) => {
+
+    try{
+        const posts = await db.searchByValue(
+            {
+                table: 'discussions',
+                searchAttribute: 'id',
+                searchValue: '*',
+                attributes: ['*']
+            }
+
+        )
+        res.json(posts)
+
+    } catch (err) {
+        res.json(err)
+
+    }
+})
+
+
+
 
 module.exports = router;
 
