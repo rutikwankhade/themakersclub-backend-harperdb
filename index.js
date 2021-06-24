@@ -14,6 +14,8 @@ app.use(express.json());
 //define routes
 app.use('/api/users', require('./routes/users'));
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/discuss-posts', require('./routes/discussPosts'));
+
 
 app.get('/', (req, res) => res.send('lets start'))
 
