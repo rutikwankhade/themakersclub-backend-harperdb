@@ -77,5 +77,34 @@ router.get('/', async(req, res) => {
 
 
 
+//GET api/discuss-posts/:id
+//Get discussion post by id
+// access public
+
+router.get('/:id', async(req, res) => {
+
+    try{
+        const post = await db.searchByValue(
+            {
+                table: 'discussions',
+                searchAttribute: 'id',
+                searchValue: req.params.id,
+                attributes: ['*']
+            }
+
+        )
+        if (!post.data.length) {
+            return res.status(404).json({msg:'Post not found'})
+        }
+        res.json(post)
+
+    } catch (err) {
+        res.json(err)
+
+    }
+})
+
+
+
 module.exports = router;
 
