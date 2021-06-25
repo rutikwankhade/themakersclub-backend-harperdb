@@ -124,7 +124,7 @@ router.delete('/:id', auth, async (req, res) => {
 
         );
 
-// res.json(post)
+        // res.json(post)
         //check user
         if (post.data[0].userId.toString() !== req.user.id) {
             return res.status(401).json({ msg: 'user not authorized' })
@@ -149,6 +149,68 @@ router.delete('/:id', auth, async (req, res) => {
     }
 })
 
+
+
+
+
+//POST api/discuss-posts/comment:id
+//create a comment on a post
+//access private
+
+router.post('/comment/:id', auth, async (request, response) => {
+
+
+    try {
+
+        const user = await db.searchByValue(
+            {
+                table: 'users',
+                searchAttribute: 'id',
+                searchValue: request.user.id,
+                attributes: ["id", "username"]
+            }
+        )
+        // response.send(user)
+
+        let post = await db.searchByValue(
+            {
+                table: 'discussions',
+                searchAttribute: 'id',
+                searchValue: request.params.id,
+                attributes: ["id", "replies"]
+            }
+        );
+
+        // response.send(post)
+
+        const comment = {
+            commentText: request.body.commentText,
+            userName: user.data[0].username,
+            userId: user.data[0].id,
+        }
+
+        post.data[0].replies.unshift(comment)
+
+        const updatedPost = await db.update(
+            {
+                table: 'discussions',
+                records: [
+                    {
+                        id: post.data[0].id,
+                        replies: post.data[0].replies
+
+                    }
+                ]
+            }
+        );
+
+        response.send(updatedPost)
+
+    } catch (err) {
+        response.send(err)
+    }
+
+});
 
 
 
