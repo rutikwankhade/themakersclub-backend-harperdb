@@ -204,7 +204,7 @@ router.post('/comment/:id', auth, async (request, response) => {
             }
         );
 
-        response.send(updatedPost)
+        response.send(post)
 
     } catch (err) {
         response.send(err)
