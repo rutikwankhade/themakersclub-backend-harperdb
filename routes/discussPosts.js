@@ -177,7 +177,7 @@ router.post('/comment/:id', auth, async (request, response) => {
                 table: 'discussions',
                 searchAttribute: 'id',
                 searchValue: request.params.id,
-                attributes: ["id", "replies"]
+                attributes: ["*"]
             }
         );
 
@@ -191,7 +191,7 @@ router.post('/comment/:id', auth, async (request, response) => {
 
         post.data[0].replies.unshift(comment)
 
-        const updatedPost = await db.update(
+      await db.update(
             {
                 table: 'discussions',
                 records: [
@@ -204,7 +204,17 @@ router.post('/comment/:id', auth, async (request, response) => {
             }
         );
 
-        response.send(post)
+
+        let updatedPost = await db.searchByValue(
+            {
+                table: 'discussions',
+                searchAttribute: 'id',
+                searchValue: request.params.id,
+                attributes: ["*"]
+            }
+        );
+
+        response.send(updatedPost)
 
     } catch (err) {
         response.send(err)
