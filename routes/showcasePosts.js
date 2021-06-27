@@ -77,11 +77,33 @@ router.get('/', async (req, res) => {
 
 
 
-
-
 //get single showcase post with id
 //GET /api/showcase/:id
 //access public
+
+router.get('/:id', async (req, res) => {
+
+    try {
+        const showcasePost = await db.searchByValue(
+            {
+                table: 'showcase',
+                searchAttribute: 'id',
+                searchValue: req.params.id,
+                attributes: ['*']
+            }
+
+        )
+        if (!showcasePost.data.length) {
+            return res.status(404).json({ msg: 'Post not found' })
+        }
+        res.json(showcasePost)
+
+    } catch (err) {
+        res.json(err)
+
+    }
+})
+
 
 
 
