@@ -25,7 +25,7 @@ router.post('/', auth, async (request, response) => {
         );
 
 
-         const showcasePost = await db.insert(
+        const showcasePost = await db.insert(
             {
                 table: 'showcase',
                 records: [
@@ -34,6 +34,7 @@ router.post('/', auth, async (request, response) => {
                         userId: user.data[0].id,
                         showcaseUrl: showcaseUrl,
                         showcaseText: showcaseText,
+                        feedbacks: []
                     }
                 ]
             }
@@ -106,14 +107,76 @@ router.get('/:id', async (req, res) => {
 
 
 
-
-
-
-
 // post feedback to showcaase post
 //POST /api/showcase/add-feedback
 //access private
 
+router.post('/feedback/:id', auth, async (request, response) => {
+
+    const { feedbackType, feedbackText } = request.body
+
+    try {
+
+        const user = await db.searchByValue(
+            {
+                table: 'users',
+                searchAttribute: 'id',
+                searchValue: request.user.id,
+                attributes: ["id", "username"]
+            }
+        )
+        // response.send(user)
+
+        let showcasePost = await db.searchByValue(
+            {
+                table: 'showcase',
+                searchAttribute: 'id',
+                searchValue: request.params.id,
+                attributes: ["*"]
+            }
+        );
+
+        // response.send(showcasePost)
+
+        const feedback = {
+            feedbackType: feedbackType,
+            feedbackText: feedbackText,
+            userName: user.data[0].username,
+            userId: user.data[0].id,
+        }
+
+        showcasePost.data[0].feedbacks.unshift(feedback)
+
+        await db.update(
+            {
+                table: 'showcase',
+                records: [
+                    {
+                        id: showcasePost.data[0].id,
+                        feedbacks: showcasePost.data[0].feedbacks
+
+                    }
+                ]
+            }
+        );
+
+
+        let updatedPost = await db.searchByValue(
+            {
+                table: 'showcase',
+                searchAttribute: 'id',
+                searchValue: request.params.id,
+                attributes: ["*"]
+            }
+        );
+
+        response.send(updatedPost)
+
+    } catch (err) {
+        response.send(err)
+    }
+
+});
 
 
 module.exports = router;
