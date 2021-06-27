@@ -49,4 +49,27 @@ router.post('/', auth, async (req, res) => {
 });
 
 
+//get all resources
+
+router.get('/', async (req, res) => {
+    
+    try {
+     const resources = await db.searchByValue(
+            {
+                table: 'resources',
+                searchAttribute: 'id',
+                searchValue: "*",
+                attributes: ["*"]
+            }
+
+        );
+
+        res.json(resources)
+    }
+    catch (err) {
+        res.send(err);
+    }
+})
+
+
 module.exports= router;
