@@ -55,6 +55,27 @@ router.post('/', auth, async (request, response) => {
 //GET /api/showcase
 //access public
 
+router.get('/', async (req, res) => {
+
+    try {
+        const showcasePosts = await db.searchByValue(
+            {
+                table: 'showcase',
+                searchAttribute: 'id',
+                searchValue: '*',
+                attributes: ['*']
+            }
+
+        )
+        res.json(showcasePosts)
+
+    } catch (err) {
+        res.json(err)
+
+    }
+})
+
+
 
 
 
