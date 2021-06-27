@@ -11,7 +11,7 @@ const auth = require('../middleware/auth');
 
 router.post('/', auth, async (request, response) => {
 
-    const { showcaseUrl, showcaseText } = request.body;
+    const { showcaseUrl, showcaseText, showcaseTitle } = request.body;
 
     try {
         const user = await db.searchByValue(
@@ -33,6 +33,7 @@ router.post('/', auth, async (request, response) => {
                         userName: user.data[0].username,
                         userId: user.data[0].id,
                         showcaseUrl: showcaseUrl,
+                        showcaseTitle: showcaseTitle,
                         showcaseText: showcaseText,
                         feedbacks: []
                     }
