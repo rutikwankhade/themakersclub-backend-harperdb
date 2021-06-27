@@ -13,6 +13,20 @@ router.post('/', auth, async (req, res) => {
     let { resourceUrl, resourceCategory } = req.body;
 
     try {
+
+         const resourceExist = await db.searchByValue(
+            {
+                table: 'resources',
+                searchAttribute: 'url',
+                searchValue: resourceUrl,
+                attributes: ['*']
+            }
+
+        )
+
+        if (resourceExist.data.length) {
+            return res.status(500).send({ error: "This resource already exists in our database" });
+        }
         
         const user = await db.searchByValue(
             {
