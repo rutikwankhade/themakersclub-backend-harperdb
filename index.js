@@ -17,6 +17,8 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/discuss-posts', require('./routes/discussPosts'));
 app.use('/api/resources', require('./routes/resources'));
 app.use('/api/showcase', require('./routes/showcasePosts'));
+app.use('/api/link', require('./routes/linkData'));
+
 
 
 

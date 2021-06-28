@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index",
-    "server":"nodemon index"
+    "server": "nodemon index"
   },
   "author": "Rutik Wankhade",
   "license": "ISC",
@@ -15,7 +15,8 @@
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "harperive": "^2.0.1",
-    "jsonwebtoken": "^8.5.1"
+    "jsonwebtoken": "^8.5.1",
+    "link-preview-generator": "^1.0.5"
   },
   "devDependencies": {
     "nodemon": "^2.0.7"
