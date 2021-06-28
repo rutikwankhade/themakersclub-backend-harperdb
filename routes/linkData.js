@@ -5,11 +5,13 @@ const linkPreviewGenerator = require("link-preview-generator");
 
 router.get('/', async (req, res) => {
 
-    const url = req.body.url
+    const {url} = req.body
 
     try {
-        const previewData = await linkPreviewGenerator(url);
-        res.send(JSON.stringify(previewData));
+            const puppeteerArgs = ["--no-sandbox", "--disable-setuid-sandbox"];
+
+        const previewData = await linkPreviewGenerator(url,puppeteerArgs);
+        res.send(previewData);
 
     } catch (err) {
 
